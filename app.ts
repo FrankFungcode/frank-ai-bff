@@ -1,41 +1,47 @@
-import { addAliases } from "module-alias";
+import { addAliases } from 'module-alias';
 
 addAliases({
-  "@root": __dirname,
-  "@interfaces": `${__dirname}/interface`,
-  "@config": `${__dirname}/config`,
-  "@middlewares": `${__dirname}/middlewares`,
+  '@root': __dirname,
+  '@interfaces': `${__dirname}/interface`,
+  '@config': `${__dirname}/config`,
+  '@middlewares': `${__dirname}/middlewares`,
 });
 
-import config from "@config/index";
+import config from '@config/index';
 
 // views\index.html 中 {{ data }}  服务端渲染
-import render from "@koa/ejs"; // 后端模板引擎EJS koa/ejs
+import render from '@koa/ejs'; // 后端模板引擎EJS koa/ejs
 
-import ErrorHandler from "@middlewares/ErrorHandler";
+import ErrorHandler from '@middlewares/ErrorHandler';
 
-import { createContainer, Lifetime } from "awilix";
-import { loadControllers, scopePerRequest } from "awilix-koa";
-import Koa from "koa";
+import { createContainer, Lifetime } from 'awilix';
+import { loadControllers, scopePerRequest } from 'awilix-koa';
+import Koa from 'koa';
 
-import { configure, getLogger } from "log4js";
+import serve from 'koa-static';
+
+import { configure, getLogger } from 'log4js';
 
 const app = new Koa();
 
 //日志系统
 configure({
-  appenders: { cheese: { type: "file", filename: `${__dirname}/logs/yd.log` } },
-  categories: { default: { appenders: ["cheese"], level: "error" } },
+  appenders: { cheese: { type: 'file', filename: `${__dirname}/logs/yd.log` } },
+  categories: { default: { appenders: ['cheese'], level: 'error' } },
 });
 
 // ** 1. 创建容器 来自 awilix
 const container = createContainer();
 
-const { port, memoryFlag, viewDir } = config;
+const { port, memoryFlag, viewDir, staticDir } = config;
+
+// 静态资源生效节点
+// 静态资源生效节点
+app.use(serve(staticDir));
 
 // ** 2. 所有的可以被注入的代码都在container中
 container.loadModules([`${__dirname}/services/*{.ts,.js}`], {
-  formatName: "camelCase",
+  formatName: 'camelCase',
   resolverOptions: {
     // 1. 每次请求创建一个新的实例
     // 2. 单例模式
@@ -50,13 +56,13 @@ app.use(scopePerRequest(container));
 render(app, {
   root: viewDir,
   layout: false,
-  viewExt: "html",
+  viewExt: 'html',
   cache: memoryFlag,
   debug: false,
 });
 
 // 在路由生效前
-const logger = getLogger("cheese");
+const logger = getLogger('cheese');
 ErrorHandler.error(app, logger);
 
 // awilix 会自动的分析 构造函数需要哪些 service，如ApiController 中的，然后从容器中取出来，注入进去
@@ -66,7 +72,7 @@ ErrorHandler.error(app, logger);
 app.use(loadControllers(`${__dirname}/routers/*{.ts,.js}`));
 
 app.listen(port || 8081, () => {
-  console.log("server is running at http://localhost:8081");
+  console.log('server is running at http://localhost:8081');
 });
 
 export default app;

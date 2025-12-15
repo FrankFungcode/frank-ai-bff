@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**/*.ts", "**/*.tsx", "!**/node_modules", "!**/dist", "!**/logs", "!**/.DS_Store"]
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/logs",
+      "!**/.DS_Store"
+    ]
   },
   "formatter": {
     "enabled": true,
