@@ -13,9 +13,9 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "paths": {
-        "@interfaces/*":["interfaces/*"],
-        "@config/*":["config/*"],
-        "@middlewares/*":["middlewares/*"],
+      "@interfaces/*": ["interface/*"],
+      "@config/*": ["config/*"],
+      "@middlewares/*": ["middlewares/*"],
     }
   },
 
