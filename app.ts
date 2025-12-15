@@ -18,7 +18,7 @@ import { createContainer, Lifetime } from 'awilix';
 import { loadControllers, scopePerRequest } from 'awilix-koa';
 import Koa from 'koa';
 
-import serve from 'koa-static';
+import serve from 'koa-static'; // 静态资源中间件
 
 import { configure, getLogger } from 'log4js';
 
@@ -30,14 +30,14 @@ configure({
   categories: { default: { appenders: ['cheese'], level: 'error' } },
 });
 
-// ** 1. 创建容器 来自 awilix
-const container = createContainer();
-
 const { port, memoryFlag, viewDir, staticDir } = config;
 
 // 静态资源生效节点
-// 静态资源生效节点
+// 静态资源生效节点 -- 在创建容器·之前
 app.use(serve(staticDir));
+
+// ** 1. 创建容器 来自 awilix
+const container = createContainer();
 
 // ** 2. 所有的可以被注入的代码都在container中
 container.loadModules([`${__dirname}/services/*{.ts,.js}`], {
