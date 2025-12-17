@@ -1,25 +1,22 @@
-<!--
- * @Author: FrankFungcode combeebe@gmail.com
- * @Date: 2025-12-13 12:21:31
- * @LastEditors: FrankFungcode combeebe@gmail.com
- * @LastEditTime: 2025-12-16 00:13:07
- * @FilePath: \frank-ai-bff\views\index.html
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="https://unpkg.com/umd-react@19.2.1/dist/react.production.min.js"></script>
+    <script src="https://unpkg.com/umd-react@19.2.1/dist/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@remix-run/router@1.21.0/dist/router.umd.min.js"></script>
+    <script src="https://unpkg.com/react-router@6.28.0/dist/umd/react-router.production.min.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.28.0/dist/umd/react-router-dom.production.min.js"></script>
     <title>Document</title>
-    <script src="/scripts/index.js"></script>
-    <link rel="stylesheet" href="/styles/index.css" />
+    <link rel="icon" href="/favicon.ico" />
+    <script defer="defer" src="/scripts/main.dbffb.bundle.js"></script>
+    <link href="/styles/main.3e1a3.css" rel="stylesheet" />
   </head>
   <body>
     <!-- 后端模板引擎EJS koa/ejs 服务端渲染 -->
     <!-- {{ data }} -->
-    HI
-    <span><%= data %></span>
+    HI <span><%= data %></span>
     <div id="app"></div>
   </body>
 </html>

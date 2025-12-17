@@ -2,7 +2,7 @@
  * @Author: FrankFungcode combeebe@gmail.com
  * @Date: 2025-12-16 00:32:24
  * @LastEditors: FrankFungcode combeebe@gmail.com
- * @LastEditTime: 2025-12-16 21:29:09
+ * @LastEditTime: 2025-12-17 14:18:45
  * @FilePath: \frank-ai-bff\app.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -27,6 +27,7 @@ import { loadControllers, scopePerRequest } from 'awilix-koa';
 import Koa from 'koa';
 
 import serve from 'koa-static'; // 静态资源中间件
+import historyApiFallback from 'koa2-connect-history-api-fallback';
 
 import { configure, getLogger } from 'log4js';
 
@@ -69,6 +70,9 @@ render(app, {
   debug: false,
 });
 
+//除去api 以外的路由 全部映射回index.html 让前端路由来处理
+app.use(historyApiFallback({ index: '/', whiteList: ['/api'] }));
+
 // 在路由生效前
 const logger = getLogger('cheese');
 ErrorHandler.error(app, logger);
@@ -80,11 +84,11 @@ ErrorHandler.error(app, logger);
 app.use(loadControllers(`${__dirname}/routers/*{.ts,.js}`));
 
 
-if (process.env.NODE_ENV !== 'development') {
+// if (process.env.NODE_ENV !== 'development') {
   // ECS EC2 本地运行 listen 端口 8081
   app.listen(port || 8081, () => {
     console.log('server is running at http://localhost:8081');
   });
-}
+// }
 
 export default app;
