@@ -1,3 +1,11 @@
+/*
+ * @Author: FrankFungcode combeebe@gmail.com
+ * @Date: 2025-12-16 00:32:24
+ * @LastEditors: FrankFungcode combeebe@gmail.com
+ * @LastEditTime: 2025-12-16 21:29:09
+ * @FilePath: \frank-ai-bff\app.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { addAliases } from 'module-alias';
 
 addAliases({
@@ -71,8 +79,12 @@ ErrorHandler.error(app, logger);
 // ** 3. 把所有的路由全部load进来
 app.use(loadControllers(`${__dirname}/routers/*{.ts,.js}`));
 
-app.listen(port || 8081, () => {
-  console.log('server is running at http://localhost:8081');
-});
+
+if (process.env.NODE_ENV !== 'development') {
+  // ECS EC2 本地运行 listen 端口 8081
+  app.listen(port || 8081, () => {
+    console.log('server is running at http://localhost:8081');
+  });
+}
 
 export default app;
