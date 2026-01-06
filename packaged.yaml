@@ -1,66 +1,69 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-
 Globals:
   Function:
     Timeout: 30
     MemorySize: 1024
     Runtime: nodejs20.x
-    Architectures: ['arm64']
+    Architectures:
+    - arm64
     Environment:
       Variables:
-        NODE_OPTIONS: '--enable-source-maps'
+        NODE_OPTIONS: --enable-source-maps
     EphemeralStorage:
       Size: 512
   Api:
     OpenApiVersion: '2.0'
     Cors:
-      AllowMethods: "'*'"
-      AllowHeaders: "'Content-Type,Authorization'"
-      AllowOrigin: "'*'"
+      AllowMethods: '''*'''
+      AllowHeaders: '''Content-Type,Authorization'''
+      AllowOrigin: '''*'''
       MaxAge: 600
-
 Resources:
   NodeModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: nest-dependencies
       Description: Node modules for Nest.js application
-      ContentUri: layer/
+      ContentUri: s3://aws-sam-cli-managed-default-samclisourcebucket-i4tjkjmldqif/0113069500a87cf4229b86ce52fed98d
       CompatibleRuntimes:
-        - nodejs20.x
+      - nodejs20.x
       RetentionPolicy: Retain
-
+    Metadata:
+      SamResourceId: NodeModulesLayer
   Api:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
       BinaryMediaTypes:
-        - 'image/*'
-        - 'multipart/form-data'
+      - image/*
+      - multipart/form-data
       Auth:
         DefaultAuthorizer: NONE
-
+    Metadata:
+      SamResourceId: Api
   KoaFunction:
     Type: AWS::Serverless::Function
     Metadata:
       SkipBuild: true
+      SamResourceId: KoaFunction
     Properties:
       Handler: lambda.handler
-      CodeUri: ./dist
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-i4tjkjmldqif/22905443f67d878337ed7000a4e24928
       MemorySize: 3008
       Timeout: 30
       Layers:
-        - !Ref NodeModulesLayer
+      - Ref: NodeModulesLayer
       Policies:
-        - VPCAccessPolicy: {}
+      - VPCAccessPolicy: {}
       Events:
         RootApiEvent:
           Type: Api
           Properties:
             Path: /
             Method: ANY
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
             Auth:
               Authorizer: NONE
         ProxyApiEvent:
@@ -68,15 +71,19 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: ANY
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
             Auth:
               Authorizer: NONE
       AutoPublishAlias: live
-
 Outputs:
   ApiEndpoint:
     Description: API Gateway endpoint URL
-    Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com/dev'
+    Value:
+      Fn::Sub: https://${Api}.execute-api.${AWS::Region}.amazonaws.com/dev
   FunctionArn:
     Description: Lambda Function ARN
-    Value: !GetAtt KoaFunction.Arn
+    Value:
+      Fn::GetAtt:
+      - KoaFunction
+      - Arn

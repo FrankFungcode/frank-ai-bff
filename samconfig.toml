@@ -1,0 +1,12 @@
+version = 0.1
+
+[production.deploy.parameters]
+stack_name = "frank-sam-bff-app"
+resolve_s3 = true
+s3_prefix = "frank-sam-bff-app"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+
+[production.global.parameters]
+region = "us-west-2"

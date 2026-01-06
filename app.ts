@@ -34,10 +34,17 @@ import { configure, getLogger } from 'log4js';
 const app = new Koa();
 
 //日志系统
-configure({
-  appenders: { cheese: { type: 'file', filename: `${__dirname}/logs/yd.log` } },
-  categories: { default: { appenders: ['cheese'], level: 'error' } },
-});
+// Lambda 环境使用 stdout,本地环境使用文件
+const logConfig = process.env.AWS_LAMBDA_FUNCTION_NAME
+  ? {
+      appenders: { cheese: { type: 'stdout' } },
+      categories: { default: { appenders: ['cheese'], level: 'error' } },
+    }
+  : {
+      appenders: { cheese: { type: 'file', filename: `${__dirname}/logs/yd.log` } },
+      categories: { default: { appenders: ['cheese'], level: 'error' } },
+    };
+configure(logConfig);
 
 const { port, memoryFlag, viewDir, staticDir } = config;
 
